@@ -4,7 +4,7 @@
 def classify_certi():
     """
     Classifying the certificates uploaded by the User.
-    Input: Image uploaded
+    Input: extracted Text box, lined text from image
     Output: Image category
     """
     return
