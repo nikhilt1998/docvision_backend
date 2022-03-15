@@ -11,9 +11,12 @@ from pathlib import Path
 import re
 from redis import Redis
 
+print("This is the pipeline file")
 
+# DocTr model for OCR
 model = ocr_predictor(pretrained=True)
 
+# init redis
 redis = Redis(host="redis")
 
 def certificate_to_text(img_path, model):
@@ -30,6 +33,9 @@ def certificate_to_text(img_path, model):
     result = model(doc)
     export = result.export()
 
+    # saving the processed image
+    savefig(img_path, result, doc)
+
     # Flatten the export
     page_words = [[word for block in page['blocks'] for line in block['lines'] 
                     for word in line['words']] for page in export['pages']]
@@ -45,7 +51,7 @@ def certificate_to_text(img_path, model):
         for words, dims in zip(page_words, page_dims)
     ]
 
-    #list of bounding box around text from image
+    # list of bounding box around text from image
     bounding_boxes = words_abs_coords[0]
 
     # Sort Bounding Boxes based on ymin and xmin coords
@@ -76,10 +82,24 @@ def certificate_to_text(img_path, model):
 
     return bounding_boxes, sorted_bounding_boxes
 
+def savefig(img_path, result, doc):
+    """
+    savefig function will save the image with bounding boxes in processed folder
+    """
+    fig = visualize_page(result.pages[0].export(), doc[0], interactive=False)
+    l = img_path.split("/")[-1]
+    file_location = "data/processed/"+l
+    fig.savefig(file_location)
+
 def pipeline(filename):
     """
     Pipeline function will initiatethe complete process of data extraction.
     Input: filename
     Output: success message
     """
-    return
+
+    # getting the text and bounding box around them.
+    bounding_boxes, sorted_bounding_boxes = certificate_to_text("data/uploaded/"+filename, model)
+
+    print(bounding_boxes)
+    return 

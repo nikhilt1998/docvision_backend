@@ -19,8 +19,8 @@ def rotate_img(img_path):
     edges = canny(image_grey)
     tested_angles = np.deg2rad(np.arange(60,120))
     h, theta, d = hough_line(edges, theta=tested_angles)
-    accum, angles, dists = hough_line_peaks(h, theta, d)
+    _ , angles, _ = hough_line_peaks(h, theta, d)
     most_common_angle = mode(np.around(angles, decimals=2))[0]
     skew_angle = np.rad2deg(most_common_angle - np.pi/2)
     img_rotated = rotate(image, skew_angle)
-    imsave(image_path, img_rotated)
+    imsave(img_path, img_rotated)

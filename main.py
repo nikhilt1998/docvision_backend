@@ -1,26 +1,26 @@
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
-from job import set_dict_redis,get_dict_redis,pipeline
+from utils.redis_fun import set_dict_redis,get_dict_redis
 from rq import Queue
 from redis import Redis
 import glob
 from fastapi.middleware.cors import CORSMiddleware
 import random
+from typing import List
+import shutil
+from ocr_pipeline.pipeline import pipeline
+from utils.certi_preprocess import rotate_img
 
 
+print("This is main file")
 q = Queue(connection=Redis(host='redis'))
 app = FastAPI()
-
-from typing import List
-import shutil 
 
 set_dict_redis("image_status", {})
 set_dict_redis("candidate_list", {})
 
-
 origins = ["*"]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -31,27 +31,43 @@ app.add_middleware(
 
 @app.post("/upload")
 async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)): 
+    """
+    Post endpoint to upload multiple images tagged to one candidate
+    Inout: Candidate ID, List<Images>
+    Output: Success/Error
+    """
     for img in uploaded_file:
-        file_location = f"uploaded/{img.filename}"
+        # Save the uploaded image in uploaded folder
+        file_location = f"data/uploaded/{img.filename}"
         with open(file_location, "wb") as file_object:
-            shutil.copyfileobj(img.file, file_object)  
+            shutil.copyfileobj(img.file, file_object)
+        
+        # Deskew the image using haugh transform and replace the previous image
+        rotate_img(file_location)
+
         key = img.filename.split('.')[0]
 
+        # setting up the redis directory 
         image_status = get_dict_redis("image_status")
         image_status[key] = {"Status":"Unprocessed","Details":{},"candidate_id":candidate_id}
-        
         set_dict_redis("image_status", image_status)
 
         print(key)
         print("Image Status: ", get_dict_redis("image_status"))
         print(q)
 
+        # adding the image in redis queue for processing
         q.enqueue(pipeline,img.filename)
     return "done"
 
 @app.get("/fileinfo")
 async def fileinfo():
-    list_files=glob.glob("uploaded/*.png")
+    """
+    Get endpoint to get the processing state of the image
+    Input: None
+    Output: File Name, Processing state
+    """
+    list_files=glob.glob("data/uploaded/*.png")
     keys=[x.split("/")[-1].split('.')[0] for x in list_files]
     all={}
     for key in keys:
@@ -61,21 +77,41 @@ async def fileinfo():
 
 @app.get("/filedetails")
 async def fileDetails(fileid):
+    """
+    Get endpoint to fetch the extracted information for the image once processed
+    Input: File name
+    Output: details (JSON)
+    """
     temp=get_dict_redis("image_status")[fileid]
     return temp
 
 @app.post("/processed")
 async def process_image(fileid):
-    response = FileResponse(path='processed/'+fileid+".png",media_type="image/png")
+    """
+    Post endpoint to fetch the processed image
+    Input: File Name
+    Output: Processed Image 
+    """
+    response = FileResponse(path='data/processed/'+fileid+".png",media_type="image/png")
     return response
 
 @app.post("/thumbnail")
 async def thumbnail_image(fileid):
-    response = FileResponse(path='uploaded/'+fileid+".png",media_type="image/png")
+    """
+    Post endpoint to fetch the original image
+    Input: File Name
+    Output: Originale Image
+    """
+    response = FileResponse(path='data/uploaded/'+fileid+".png",media_type="image/png")
     return response
     
 @app.post("/addCandidates")
 async def addCandidate(candidateId, name, status):
+    """
+    Post endpoint to add the candidate information.
+    Input: Candidate ID, Candidate name, Current candiate status
+    Output: Success/Error
+    """
     candidate_list = get_dict_redis("candidate_list")
     candidate_list[candidateId] = {
         "Name":name,
@@ -86,6 +122,11 @@ async def addCandidate(candidateId, name, status):
 
 @app.get("/candidateInfo")
 async def CandidateInfo():
+    """
+    Get endpoint to fetch candidate information
+    Input: None
+    Output: Candidate Details (JSON)
+    """
     candidate_list = get_dict_redis("candidate_list")
     image_status = get_dict_redis("image_status")
 

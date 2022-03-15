@@ -1,0 +1,16 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  api:
+    image: ocr-base-image
+    container_name: api
+    working_dir: '/usr/src/app/'
+    command: bash -c " python /usr/src/app/ocr_pipeline/pipeline.py & rq worker --url redis://redis & uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/src/app/
+    links:
+      - redis
+
+  redis:
+    image: redis
