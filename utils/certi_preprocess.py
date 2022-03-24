@@ -23,4 +23,4 @@ def rotate_img(img_path):
     most_common_angle = mode(np.around(angles, decimals=2))[0]
     skew_angle = np.rad2deg(most_common_angle - np.pi/2)
     img_rotated = rotate(image, skew_angle)
-    imsave(image_path, img_rotated)
+    imsave(img_path, img_rotated)

@@ -1,13 +1,28 @@
 """ Classifying the certificates uploaded by the User
     and verify the classification result with the user's input """
 
-def classify_certi():
+from fuzzywuzzy import fuzz,process
+
+def classify_certi(ocr_text):
     """
     Classifying the certificates uploaded by the User.
     Input: extracted Text box, lined text from image
     Output: Image category
     """
-    return
+    choices1 = ["degree", "provisional"]  
+    res1,conf1 = process.extractOne(ocr_text,choices1)
+    print(conf1)
+    if res1 == "degree" or res1 == "provisional" and conf1 > 50:
+      return "dc"
+    elif conf1 < 50:
+      choices2 = ["sgpa", "board"]
+      res2,conf2 = process.extractOne(ocr_text,choices2)
+      if res2 == "sgpa" and conf2 > 50:
+        return "grades_pattern"
+      elif res2 == "board" and conf2 > 50:
+        return "board"
+      else:
+        return "marks_pattern"
 
 def verify_user_input():
     """
@@ -16,4 +31,4 @@ def verify_user_input():
     Output: true/false
     Error info: Raise error if User input does not matches with classify_certi() result
     """
-    return
+    return True
