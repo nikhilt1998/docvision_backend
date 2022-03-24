@@ -1,5 +1,6 @@
 """Redis utility function for setting and retrieving data"""
 
+
 import msgpack
 
 def set_dict_redis(redis , key, dictionary):

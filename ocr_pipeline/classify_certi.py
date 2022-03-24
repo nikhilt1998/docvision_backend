@@ -16,14 +16,12 @@ def classify_certi(ocr_text):
     if res1 == "degree" or res1 == "provisional" and conf1 > 50:
       return "dc"
     elif conf1 < 50:
-      choices2 = ["sgpa", "board"]
+      choices2 = ["sgpa", "cgpa"]
       res2,conf2 = process.extractOne(ocr_text,choices2)
-      if res2 == "sgpa" and conf2 > 50:
-        return "grades_pattern"
-      elif res2 == "board" and conf2 > 50:
-        return "board"
-      else:
-        return "marks_pattern"
+      if res2 == "sgpa" and conf2 > 50 or res2 == "cgpa" and conf2>50:
+        return "gpa_pattern"
+    
+    return "marks_pattern"
 
 def verify_user_input():
     """
