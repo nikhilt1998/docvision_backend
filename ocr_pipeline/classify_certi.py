@@ -11,6 +11,7 @@ def classify_certi(ocr_text):
     """
     choices1 = ["degree", "provisional"]  
     res1,conf1 = process.extractOne(ocr_text,choices1)
+    
     print(conf1)
     if res1 == "degree" or res1 == "provisional" and conf1 > 50:
       return "dc"

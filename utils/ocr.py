@@ -20,3 +20,4 @@ def get_spaced_text(sorted_bounding_boxes):
   
   spaced_text = ' '.join([desired[-1] for cord in sorted_bounding_boxes for desired in cord])
   return spaced_text
+
