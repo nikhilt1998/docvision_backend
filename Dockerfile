@@ -1,5 +1,5 @@
 # Some container that is already suitable for unicover
-FROM ocr-base-image
+FROM 4108748/ocr-base-image
 # ADD uploaded /app/uploaded
 # ADD processed /app/processed
 # ADD ner /app/ner
