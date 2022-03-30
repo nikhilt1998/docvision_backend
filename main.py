@@ -1,7 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
-from utils.redis_fun import set_dict_redis,get_dict_redis
+from utils.redis import set_dict_redis,get_dict_redis
+from ocr_pipeline import pipeline
 from rq import Queue
 from redis import Redis
 import glob

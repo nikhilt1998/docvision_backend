@@ -1,5 +1,6 @@
 """Redis utility function for setting and retrieving data"""
 
+
 import msgpack
 from redis import Redis
 

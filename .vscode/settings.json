@@ -1,0 +1,11 @@
+{
+    "python.analysis.extraPaths": [
+        "./ocr_pipeline/pipeline_components/board_university",
+        "./ocr_pipeline/pipeline_components/degree_cert",
+        "./ocr_pipeline/pipeline_components/grand_total_marks",
+        "./ocr_pipeline/pipeline_components/sgpa_cgpa",
+        "./ocr_pipeline/pipeline_components/year",
+        "./ocr_pipeline/pipeline_components/subjects",
+        "./utils"
+    ]
+}
