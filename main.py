@@ -10,7 +10,7 @@ import random
 from typing import List
 import shutil
 from ocr_pipeline.pipeline import pipeline
-from utils.certi_preprocess import rotate_img
+from utils.certi_preprocess import deskew_img
 
 
 print("This is main file")
@@ -43,7 +43,7 @@ async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)):
             shutil.copyfileobj(img.file, file_object)
         
         # Deskew the image using haugh transform and replace the previous image
-        rotate_img(file_location)
+        deskew_img(file_location)
 
         key = img.filename.split('.')[0]
 

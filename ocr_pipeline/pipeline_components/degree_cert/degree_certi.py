@@ -3,12 +3,13 @@ import json
 import spacy
 from pathlib import Path
 
-output_dir=Path("ner_dc")
 
-#requires spacyv2
-nlp_test = spacy.load(output_dir)
 
 def extract_dc_details(ocr_text):
+
+  output_dir = Path("ner_dc")
+  #requires spacyv2
+  nlp_test = spacy.load(output_dir)
   doc = nlp_test(ocr_text)
   entities = [(ent.text, ent.label_) for ent in doc.ents]
   

@@ -2,7 +2,6 @@
 
 import hmni
 from fuzzywuzzy import fuzz
-from ocr import ocr_linecords_correction,certificate_to_text
 from doctr.utils.visualization import visualize_page
 
 #hmni for spellcorrection

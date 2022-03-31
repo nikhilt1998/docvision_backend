@@ -1,17 +1,26 @@
 """ Initiate the data extraction pipeline. """
 
-from re import sub
-from unicodedata import category
-import pipeline_components.board_university.board_university
-import pipeline_components.degree_cert.degree_certi
-import pipeline_components.grand_total_marks.grand_total_marks
-import pipeline_components.sgpa_cgpa.sgpa_cgpa
-import pipeline_components.subjects.subjects
-import pipeline_components.year.year
+import sys
 
-import utils.certi_preprocess,utils.certi_postprocess,utils.ocr,utils.redis
+sys.path.insert(0,"ocr_pipeline/pipeline_components/board_university")
+sys.path.insert(0,"ocr_pipeline/pipeline_components/degree_cert")
+sys.path.insert(0,"ocr_pipeline/pipeline_components/grand_total_marks")
+sys.path.insert(0,"ocr_pipeline/pipeline_components/sgpa_cgpa")
+sys.path.insert(0,"ocr_pipeline/pipeline_components/subjects")
+sys.path.insert(0,"ocr_pipeline/pipeline_components/year")
+sys.path.insert(0,"utils")
+sys.path.insert(0,"ocr_pipeline")
 
 from board_university import extract_board_univer
+# import pipeline_components.degree_cert.degree_certi
+# import pipeline_components.grand_total_marks.grand_total_marks
+# import pipeline_components.sgpa_cgpa.sgpa_cgpa
+# import pipeline_components.subjects.subjects
+# import pipeline_components.year.year
+
+# import utils.certi_preprocess,utils.certi_postprocess,utils.ocr
+
+# import board_university.extract_board_univer
 from degree_certi import extract_dc_details
 from grand_total_marks import extract_total_marks
 from sgpa_cgpa import extract_GPA
@@ -19,10 +28,10 @@ from subjects import extract_subjects
 from year import extract_year
 
 from certi_preprocess import deskew_img
-from certi_postprocess import spellingCorrection,ocr_linecords_correction
-from ocr import certificate_to_text,get_lined_text,get_spaced_text
+from certi_postprocess import spellingCorrection
+from ocr import certificate_to_text,get_spaced_text,ocr_linecords_correction
 
-from classify_certi import classify_certi
+from classify_certi import classify_certi_docs
 
 from doctr.models import ocr_predictor
 import redis
@@ -67,7 +76,7 @@ def pipeline(filename):
     ocr_text = get_spaced_text(sorted_bounding_boxes)
 
     #classify into categories
-    categ = classify_certi(ocr_text)
+    categ = classify_certi_docs(ocr_text)
 
     #json output to return
     pipeline_output = {}
