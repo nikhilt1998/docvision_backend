@@ -159,7 +159,7 @@ def extract_subjects(crrt_bboxes):
     Output: extracted subjects list
     """
      # defining the api
-    api_url = "http://3ca5-104-198-50-1.ngrok.io/"
+    api_url = "http://515a-35-243-247-246.ngrok.io/"
     data = {
         "image_path": "/content/drive/MyDrive/Infy_Assignment_Team_Anant/UNIVERSITIES_&_COLLEGES_MARKSHEETS/DocVisionData/Working Images/State-AP/AP-12.png",
     }

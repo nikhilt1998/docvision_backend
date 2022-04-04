@@ -53,7 +53,7 @@ def pipeline(filename):
     """
     filename = "data/uploaded_docs/" + filename
     new_filename = deskew_img(filename)
-#    new_filename = "data/deskewed_docs/" + new_filename
+    new_filename = "data/deskewed_docs/" + new_filename
 
     # getting the text and bounding box around them.
     words_abs_coords = certificate_to_text(new_filename, model)

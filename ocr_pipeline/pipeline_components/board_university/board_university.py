@@ -10,7 +10,7 @@ def extract_board_univer(ocr_text):
     """
 
     # defining the api
-    api_url = "http://0ec6-104-198-50-1.ngrok.io/ner/"
+    api_url = "http://bb9f-35-225-67-160.ngrok.io/"
     data = {
         "t": ocr_text
     }
