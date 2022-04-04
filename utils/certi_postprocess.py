@@ -73,7 +73,7 @@ def savefig(img_path, result, doc):
     """
     fig = visualize_page(result.pages[0].export(), doc[0], interactive=False)
     l = img_path.split("/")[-1]
-    file_location = "data/processed/"+l
+    file_location = "data/processed_docs/"+l
     fig.savefig(file_location)
 
 

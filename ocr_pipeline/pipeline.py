@@ -44,14 +44,6 @@ redis = Redis(host="redis")
 # init DocTr model for OCR
 model = ocr_predictor(pretrained=True)
 
-def savefig(img_path, result, doc):
-    """
-    savefig function will save the image with bounding boxes in processed folder
-    """
-    fig = visualize_page(result.pages[0].export(), doc[0], interactive=False)
-    l = img_path.split("/")[-1]
-    file_location = "data/processed/"+l
-    fig.savefig(file_location)
 
 def pipeline(filename):
     """

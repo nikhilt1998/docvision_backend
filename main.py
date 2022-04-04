@@ -37,8 +37,8 @@ async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)):
     Output: Success/Error
     """
     for img in uploaded_file:
-        # Save the uploaded image in uploaded folder
-        file_location = f"data/uploaded/{img.filename}"
+        # Save the uploaded_docs image in uploaded_docs folder
+        file_location = f"data/uploaded_docs/{img.filename}"
         with open(file_location, "wb") as file_object:
             shutil.copyfileobj(img.file, file_object)
         
@@ -67,7 +67,7 @@ async def fileinfo():
     Input: None
     Output: File Name, Processing state
     """
-    list_files=glob.glob("data/uploaded/*.png")
+    list_files=glob.glob("data/uploaded_docs/*.png")
     keys=[x.split("/")[-1].split('.')[0] for x in list_files]
     all={}
     for key in keys:
@@ -78,7 +78,7 @@ async def fileinfo():
 @app.get("/filedetails")
 async def fileDetails(fileid):
     """
-    Get endpoint to fetch the extracted information for the image once processed
+    Get endpoint to fetch the extracted information for the image once processed_docs
     Input: File name
     Output: details (JSON)
     """
@@ -88,11 +88,11 @@ async def fileDetails(fileid):
 @app.post("/processed")
 async def process_image(fileid):
     """
-    Post endpoint to fetch the processed image
+    Post endpoint to fetch the processed_docs image
     Input: File Name
-    Output: Processed Image 
+    Output: processed_docs Image 
     """
-    response = FileResponse(path='data/processed/'+fileid+".png",media_type="image/png")
+    response = FileResponse(path='data/processed_docs/'+fileid+".png",media_type="image/png")
     return response
 
 @app.post("/thumbnail")
@@ -102,7 +102,7 @@ async def thumbnail_image(fileid):
     Input: File Name
     Output: Originale Image
     """
-    response = FileResponse(path='data/uploaded/'+fileid+".png",media_type="image/png")
+    response = FileResponse(path='data/uploaded_docs/'+fileid+".png",media_type="image/png")
     return response
     
 @app.post("/addCandidates")
@@ -136,7 +136,7 @@ async def CandidateInfo():
         educational_details[candidate_id] = []
 
     for image_name in image_status:
-        if image_status[image_name]["Status"]=="Processed":
+        if image_status[image_name]["Status"]=="processed_docs":
 
             img_details = image_status[image_name]["Details"]
             
