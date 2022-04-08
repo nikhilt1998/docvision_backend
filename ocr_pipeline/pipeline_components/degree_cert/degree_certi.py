@@ -6,6 +6,11 @@ from pathlib import Path
 
 
 def extract_dc_details(ocr_text):
+  """
+  Extract the degree certifcate details from OCR text.
+  Input: certificate's OCR text.
+  Output: Degree certificate details in format
+  """
 
   output_dir = Path("ner_dc")
   #requires spacyv2

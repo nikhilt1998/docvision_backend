@@ -7,6 +7,11 @@ import copy
 from config import subjects_api_colab
 
 def table_indices(crrt_bboxes, tabCord):
+  """
+  Identifying the starting and ending table row indices in the OCR text.
+  Input: Sorted text bounding boxes and image table coordinates from table detection. 
+  Output: List of table row indices of OCR text.
+  """
   index_under_table = []
   xTabMin, yTabMin, xTabMax, yTabMax = tabCord
 
@@ -27,6 +32,11 @@ def table_indices(crrt_bboxes, tabCord):
 
 
 def columnSep(index_under_tablee, crrt_bboxes):
+  """
+  Seperating the words in the table text based upon which column it belongs to.
+  Input: List of table row indices,Sorted bounding boxes. 
+  Output: List of column seperated table text.
+  """
   colSepLines = []
 
   for i in index_under_tablee:
@@ -55,6 +65,12 @@ def columnSep(index_under_tablee, crrt_bboxes):
 
 
 def modify_table(words_sep_cols):
+  """
+  Concatinating all the words in a column to a single word 
+  and also merging the text bounding boxes of all the words in a column.
+  Input: List of column seperated words. 
+  Output: List of modified column seperated words.
+  """
   table_lines = []
   for i in range(len(words_sep_cols)): # Line
     lines = []
@@ -78,6 +94,11 @@ def modify_table(words_sep_cols):
 
 
 def formTable(table_lines_parameter):
+  """
+  recreating the table structure using the column seperated words.
+  Input: List of modified column seperated words. 
+  Output: Table structured List of rows by column separated.
+  """
   tableList = []
   table_lines = copy.deepcopy(table_lines_parameter)
 
@@ -136,6 +157,11 @@ def formTable(table_lines_parameter):
   return tableList
 
 def storeOnlyValues(tableList):
+  """
+  Extract only text from table list
+  Input: Table structured List of rows by column separated. 
+  Output: Table text without Coordinates.
+  """
   storeOnlyTableValue = []
   for col in range(len(tableList)):
     storeOnlyColumnValue = []
@@ -146,7 +172,12 @@ def storeOnlyValues(tableList):
   return storeOnlyTableValue
 
 
-def convertListToDataFrame(storeOnlyTableValue):  
+def convertListToDataFrame(storeOnlyTableValue): 
+  """
+  Converting table list to pandas dataframe
+  Input: Table text without Coordinates. 
+  Output: Table text as DataFrame.
+  """
   tableDataFrame = pd.DataFrame(storeOnlyTableValue)
 
   tableDataFrame = tableDataFrame.transpose()
@@ -156,8 +187,9 @@ def convertListToDataFrame(storeOnlyTableValue):
 
 def extract_subjects(crrt_bboxes):
     """
-    Input: certificate's OCR text, OCR boxes
-    Output: extracted subjects list
+    Pipeline for Extracting the subjects and table data from OCR text
+    Input: Sorted text bounding boxes.
+    Output:Table text as HTML format
     """
      # defining the api
     api_url = subjects_api_colab

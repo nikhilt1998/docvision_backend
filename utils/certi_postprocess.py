@@ -8,6 +8,12 @@ from doctr.utils.visualization import visualize_page
 matcher = hmni.Matcher(model='latin')
 
 def similarity_calculator(word1, word2, matcher):
+    """
+    Calculating the similarity between words.
+    Input: passing the 2 words which need the score of similarity 
+    and a hmni function named matcher.
+    Output: Similarity score.
+    """
     score_1 = fuzz.ratio(word1, word2) # score from fuzzywuzzy
     try:
       score_2 = matcher.similarity(word1, word2) # score from hmni
@@ -20,6 +26,11 @@ def similarity_calculator(word1, word2, matcher):
 
 
 def spellingCorrection(words_abs_coords):
+  """
+  Correct the sentence using hmni and fuzzywuzzy
+  Input:  Coordinates of words.
+  Output: sentence after correction. 
+  """
   lookupTable = ['TOTAL', 'ENGLISH', 'THEORY', 'PRACTICALS',
                  'West', 'Bengal', 'Secondary', 'SECONDARY', 
                  'Board', 'Results', 'EIGHTY', 'WORDS',
@@ -52,18 +63,4 @@ def spellingCorrection(words_abs_coords):
           words_abs_coords[0][words][-2] = word1[:]
 
   return words_abs_coords
-
-
-
-"""def testOCRFunc(img_path):
-  rot_img_path = rotate_img(img_path)
-  # rot_img_path = "/content/rotated_image.png"
-  words_abs_coords =  ocrFunc(rot_img_path, model)
-  # Spelling correction
-  words_abs_coords = spellingCorrection(words_abs_coords)
-  # Line correction
-  (text, crrt_bboxes, tableTextList) = lineCoordsCorrection(words_abs_coords)
-  text = '\n'.join(tableTextList)
-  return text, crrt_bboxes"""
-
 

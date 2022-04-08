@@ -3,6 +3,12 @@
 import json
 
 def getText(bboxes, crrt_bboxes, orientation):
+  """
+  Identifying the orientation of the value of SGPA/CGPA present  
+  and extracting the SCPA/CGPA from OCR text. 
+  Input: Text bounding boxes,Sorted text bounding boxes and Orientation. 
+  Output: Dictionary of CGPA,SCPA and Orientation.
+  """
   op = {}
   op["CGPA"] = ''
   op["SGPA"] = ''
@@ -60,6 +66,11 @@ def getText(bboxes, crrt_bboxes, orientation):
 
 
 def extract_GPA(crrt_bboxes, bboxes):
+  """
+  Master Function for extracting the GPA from the certificate. 
+  Input: Sorted text bounding boxes,Text bounding boxes. 
+  Output: json containing the details of SGPA/CGPA. 
+  """
   grades = {}
 
   op = getText(bboxes,crrt_bboxes, 'H')

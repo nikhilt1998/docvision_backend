@@ -48,7 +48,14 @@ def certificate_to_text(img_path, model):
     return words_abs_coords
 
 def ocr_linecords_correction(words_abs_coords):
+    """
+    Correction of line coordinates of the OCR text.
+    Input:  unsorted text bounding boxes.
+    Output: sorted text bounding boxes.
+    """
+    
     words_abs_coords = [[words[:-1] for words in words_abs_coords[0]]]
+    
     # list of bounding box around text from image
     bounding_boxes = words_abs_coords[0]
 

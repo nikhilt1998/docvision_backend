@@ -6,6 +6,11 @@ model_name = "deepset/roberta-base-squad2"
 nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
 
 def qna(question,context):
+  """
+  Extract the grand total using question and answering model.
+  Input:  Question and OCR text for question and answering model.
+  Output: Answer for the question asked.
+  """
   qa_input = {
       'question': question,
       'context': context
@@ -14,17 +19,30 @@ def qna(question,context):
 
   return res
 
-def preprocess(text_str):
+def preprocess_answer(text_str):
+  """
+  preprocess the answer received from qna to eliminate the unwanted characters/noise.
+  Input: answer from qna model
+  Output: preprocessed list of words 
+  
+  """
   unwantedChars = ['-', '.','*',':','/','\\']
   for char in unwantedChars:
     text_str = text_str.replace(char,"")
   text_str = text_str.replace("  "," ")
+  # To remove noise in the answer (text might contain multiple lines) 
   sep = '\n'
-  stripped = text_str.split(sep, 1)[0]
-  splt = stripped.split(" ")
-  return splt
+  req_text = text_str.split(sep, 1)[0]
+  list_of_words = req_text.split(" ")
+  return list_of_words
 
-def text2int(textnum, numwords={}):
+def text2int(textnum):
+    """
+    Mapping the Grand Total text format to numerical format.
+    Input: preprocessed answer string 
+    Output: numeric format of grand total marks  
+    """
+    numwords={}
     textnum = textnum.lower()
     if not numwords:
       units = [
@@ -57,11 +75,16 @@ def text2int(textnum, numwords={}):
       return -1
     return result + current
 
-def convert(splt):
+def final_answer(list_of_words):
+    """
+    Return final grand total marks after the sanity checks.
+    Input: list of words from preproccesed task.   
+    Output: converted numeric formated grand total marks 
+    """
     num_str_lst=[]
     digit = []
 
-    for i in splt:
+    for i in list_of_words:
       if(i.isdigit()):
         digit.append(i)
       else:
@@ -80,15 +103,16 @@ def convert(splt):
 
 def extract_total_marks(ocr_text):
     """
-    Input: certificate's OCR text
-    Output: extracted total marks
+    Extract the grand total marks from the certificate.
+    Input: certificate's OCR text.
+    Output: extracted total marks.
     """
     ans1 = qna('grand total marks?',ocr_text)['answer']
     ans2 = qna('total marks obtained in words?',ocr_text)['answer']
-    finaltext1 = preprocess(ans1)
-    finaltext2 = preprocess(ans2)
-    resp1 = convert(finaltext1)
-    resp2 = convert(finaltext2)
+    finaltext1 = preprocess_answer(ans1)
+    finaltext2 = preprocess_answer(ans2)
+    resp1 = final_answer(finaltext1)
+    resp2 = final_answer(finaltext2)
 
     if(resp1 == -1 and resp2 == -1):
       return "do manual check"
