@@ -67,13 +67,3 @@ def spellingCorrection(words_abs_coords):
   return text, crrt_bboxes"""
 
 
-def savefig(img_path, result, doc):
-    """
-    savefig function will save the image with bounding boxes in processed folder
-    """
-    fig = visualize_page(result.pages[0].export(), doc[0], interactive=False)
-    l = img_path.split("/")[-1]
-    file_location = "data/processed_docs/"+l
-    fig.savefig(file_location)
-
-

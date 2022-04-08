@@ -11,9 +11,11 @@ from typing import List
 import shutil
 from ocr_pipeline.pipeline import pipeline
 from utils.certi_preprocess import deskew_img
+from doctr.models import ocr_predictor
+from config import logger
 
 
-print("This is main file")
+logger.info("This is main file")
 q = Queue(connection=Redis(host='redis'))
 app = FastAPI()
 
@@ -42,8 +44,6 @@ async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)):
         with open(file_location, "wb") as file_object:
             shutil.copyfileobj(img.file, file_object)
         
-        # Deskew the image using haugh transform and replace the previous image
-        deskew_img(file_location)
 
         key = img.filename.split('.')[0]
 
@@ -52,9 +52,9 @@ async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)):
         image_status[key] = {"Status":"Unprocessed","Details":{},"candidate_id":candidate_id}
         set_dict_redis("image_status", image_status)
 
-        print(key)
-        print("Image Status: ", get_dict_redis("image_status"))
-        print(q)
+        logger.info(key)
+        logger.info("Image Status: ", get_dict_redis("image_status"))
+        logger.info(q)
 
         # adding the image in redis queue for processing
         q.enqueue(pipeline,img.filename)
@@ -170,9 +170,9 @@ async def CandidateInfo():
             
 
             educational_details[image_status[image_name]["candidate_id"]].append(details)
-    print("Candidate List: ",candidate_list)
-    print("")
-    print("Education Details: ",educational_details)
+    logger.info("Candidate List: ",candidate_list)
+    logger.info("")
+    logger.info("Education Details: ",educational_details)
     output_details = []
     for candidate_id in candidate_list:
         candidate_info = candidate_list[candidate_id]

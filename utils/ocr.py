@@ -10,7 +10,6 @@ import re
 from pathlib import Path
 import re
 from redis import Redis
-from certi_postprocess import savefig
 
 
 def certificate_to_text(img_path, model):
@@ -49,6 +48,7 @@ def certificate_to_text(img_path, model):
     return words_abs_coords
 
 def ocr_linecords_correction(words_abs_coords):
+    words_abs_coords = [[words[:-1] for words in words_abs_coords[0]]]
     # list of bounding box around text from image
     bounding_boxes = words_abs_coords[0]
 
@@ -101,4 +101,13 @@ def get_spaced_text(sorted_bounding_boxes):
   
   spaced_text = ' '.join([desired[-1] for cord in sorted_bounding_boxes for desired in cord])
   return spaced_text
+
+def savefig(img_path, result, doc):
+    """
+    savefig function will save the image with bounding boxes in processed folder
+    """
+    fig = visualize_page(result.pages[0].export(), doc[0], interactive=False)
+    l = img_path.split("/")[-1]
+    file_location = "data/processed_docs/"+l
+    fig.savefig(file_location)
 

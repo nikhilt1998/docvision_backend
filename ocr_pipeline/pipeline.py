@@ -35,8 +35,10 @@ from classify_certi import classify_certi_docs
 
 from doctr.models import ocr_predictor
 import redis
+from utils.redis_fun import set_dict_redis,get_dict_redis
 
 from redis import Redis
+from config import logger
 
 # init redis
 redis = Redis(host="redis")
@@ -51,9 +53,18 @@ def pipeline(filename):
     Input: filename
     Output: success message
     """
+    key = filename.split('.')[0]
+
+    # Updating up the redis directory 
+    image_status = get_dict_redis("image_status")
+    image_status[key]["Status"] = "Processing"
+    set_dict_redis("image_status", image_status)
+
+    logger.info("Image Status updated for "+ key)
+
+    # skew detectition and correction 
     filename = "data/uploaded_docs/" + filename
     new_filename = deskew_img(filename)
-#    new_filename = "data/deskewed_docs/" + new_filename
 
     # getting the text and bounding box around them.
     words_abs_coords = certificate_to_text(new_filename, model)
@@ -69,6 +80,7 @@ def pipeline(filename):
 
     #classify into categories
     categ = classify_certi_docs(ocr_text)
+    logger.info("------------------Certificate classified as ", categ)
 
     #json output to return
     pipeline_output = {}
@@ -102,4 +114,11 @@ def pipeline(filename):
       pipeline_output['subjects'] = subjects
       pipeline_output['year'] = year
     
+    # Updating the redis directory
+    image_status = get_dict_redis("image_status")
+    state = image_status[key]
+    state["Status"] = "Processed"
+    state["Details"] = pipeline_output
+    set_dict_redis("image_status", image_status)
+
     return pipeline_output

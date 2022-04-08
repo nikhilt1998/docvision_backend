@@ -4,6 +4,7 @@ import json
 import requests
 import pandas as pd
 import copy
+from config import subjects_api_colab
 
 def table_indices(crrt_bboxes, tabCord):
   index_under_table = []
@@ -159,7 +160,7 @@ def extract_subjects(crrt_bboxes):
     Output: extracted subjects list
     """
      # defining the api
-    api_url = "http://515a-35-243-247-246.ngrok.io/"
+    api_url = subjects_api_colab
     data = {
         "image_path": "/content/drive/MyDrive/Infy_Assignment_Team_Anant/UNIVERSITIES_&_COLLEGES_MARKSHEETS/DocVisionData/Working Images/State-AP/AP-12.png",
     }
