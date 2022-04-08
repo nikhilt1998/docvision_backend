@@ -27,6 +27,12 @@ import os
 #     imsave(img_path, img_rotated)
 
 def skew_angle_hough_transform(image):
+    """
+    Caluculating the angle of the image.
+    Input: Image.
+    Output: Caluculated angle of the image.
+    ///->Error Info: Raise an error if 
+    """
     image_grey = rgb2gray(image)
     edges = canny(image_grey)
     tested_angles = np.deg2rad(np.arange(60,120))
@@ -37,6 +43,12 @@ def skew_angle_hough_transform(image):
     return skew_angle
     
 def deskew_img(img_path):
+    """
+    deskewing the image for OCR to extract text.
+    Input:  path of the image.
+    Output: deskewed image.
+    ///->Error Info: Raise an error if 
+    """
     image = imread(img_path)
     angle = skew_angle_hough_transform(image)
     print("Angle of rotation: ",angle[0])

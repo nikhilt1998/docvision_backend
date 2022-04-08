@@ -6,7 +6,7 @@ from fuzzywuzzy import fuzz,process
 def classify_certi(ocr_text):
     """
     Classifying the certificates uploaded by the User.
-    Input: extracted Text box, lined text from image
+    Input: Certificate's OCR Text. 
     Output: Image category
     """
     choices1 = ["degree", "provisional"]  

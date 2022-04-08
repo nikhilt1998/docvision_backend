@@ -8,6 +8,11 @@ model_name = "deepset/roberta-base-squad2"
 nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
 
 def date_regex(date_str):
+  """
+  Extracting the year using regex.
+  Input: answer from question and answering model.
+  Output: Certificate issued year.
+  """
   regex_dates = r'^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]|(?:jan|mar|may|jul|aug|oct|dec|january|march|may|july|august|october|december)))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2]|(?:jan|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|march|april|may|june|july|august|september|october|november|december))\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)(?:0?2|(?:feb|february))\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9]|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|january|february|march|april|may|june|july|august|september))|(?:1[0-2]|(?:oct|nov|dec|october|november|december)))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$'
 
   x = re.search( regex_dates, date_str)
@@ -30,6 +35,11 @@ def date_regex(date_str):
 
 
 def qna(question,context):
+  """
+  Extract the year using question and answering model.
+  Input:  Question and OCR text for question and answering model.
+  Output: answer for the question asked. 
+  """
   qa_input = {
       'question': question,
       'context': context
@@ -40,7 +50,8 @@ def qna(question,context):
 
 def extract_year(ocr_text):
     """
-    Input: certificate's OCR text, OCR boxes
+    Extract the certificate issued year.
+    Input: certificate's OCR text
     Output: extracted year
     """
     ans1 = qna('What is the examination month?',ocr_text)['answer'].lower()

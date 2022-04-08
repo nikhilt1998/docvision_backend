@@ -9,6 +9,12 @@ from doctr.utils.visualization import visualize_page
 matcher = hmni.Matcher(model='latin')
 
 def similarity_calculator(word1, word2, matcher):
+    """
+    Calculating the similarity between words.
+    Input: passing the 2 words which need the score of similarity 
+    and a hmni function named matcher.
+    Output: Similarity score.
+    """
     score_1 = fuzz.ratio(word1, word2) # score from fuzzywuzzy
     try:
       score_2 = matcher.similarity(word1, word2) # score from hmni
@@ -21,6 +27,11 @@ def similarity_calculator(word1, word2, matcher):
 
 
 def spellingCorrection(words_abs_coords):
+  """
+  Correct the sentence using hmni and fuzzywuzzy
+  Input:  Coordinates of words.
+  Output: sentence after correction. 
+  """
   lookupTable = ['TOTAL', 'ENGLISH', 'THEORY', 'PRACTICALS',
                  'West', 'Bengal', 'Secondary', 'SECONDARY', 
                  'Board', 'Results', 'EIGHTY', 'WORDS',
@@ -55,24 +66,13 @@ def spellingCorrection(words_abs_coords):
   return words_abs_coords
 
 
-
-"""def testOCRFunc(img_path):
-  rot_img_path = rotate_img(img_path)
-  # rot_img_path = "/content/rotated_image.png"
-  words_abs_coords =  ocrFunc(rot_img_path, model)
-  # Spelling correction
-  words_abs_coords = spellingCorrection(words_abs_coords)
-  # Line correction
-  (text, crrt_bboxes, tableTextList) = lineCoordsCorrection(words_abs_coords)
-  text = '\n'.join(tableTextList)
-  return text, crrt_bboxes"""
-
-
-def savefig(img_path, result, doc):
+def savefig(img_path, ocr_result, ocr_doc):
     """
-    savefig function will save the image with bounding boxes in processed folder
+    Save the ocr processed image
+    Input:Image path,ocr result and ocr doc.
+    Output:Image saved in the processed folder.
     """
-    fig = visualize_page(result.pages[0].export(), doc[0], interactive=False)
+    fig = visualize_page(ocr_result.pages[0].export(), ocr_doc[0], interactive=False)
     l = img_path.split("/")[-1]
     file_location = "data/processed/"+l
     fig.savefig(file_location)

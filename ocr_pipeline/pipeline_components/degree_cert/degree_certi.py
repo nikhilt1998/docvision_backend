@@ -9,6 +9,11 @@ output_dir=Path("ner_dc")
 nlp_test = spacy.load(output_dir)
 
 def extract_dc_details(ocr_text):
+  """
+  Extract the degree certifcate details from OCR text.
+  Input: certificate's OCR text.
+  Output: Degree certificate details in format
+  """
   doc = nlp_test(ocr_text)
   entities = [(ent.text, ent.label_) for ent in doc.ents]
   

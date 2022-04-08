@@ -5,8 +5,10 @@ import requests
 
 def extract_board_univer(ocr_text):
     """
-    Input: certificate's OCR text, OCR boxes
+    Extract the University name or Board name from the OCR text.
+    Input: certificate's OCR text
     Output: university or board's name
+    Error Info: Raise an error if spacy model doesn't recognise university or board name.
     """
 
     # defining the api
