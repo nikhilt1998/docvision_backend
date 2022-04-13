@@ -185,7 +185,7 @@ def convertListToDataFrame(storeOnlyTableValue):
   return tableDataFrame
 
 
-def extract_subjects(crrt_bboxes):
+def extract_subjects(crrt_bboxes, key):
     """
     Pipeline for Extracting the subjects and table data from OCR text
     Input: Sorted text bounding boxes.
@@ -193,8 +193,11 @@ def extract_subjects(crrt_bboxes):
     """
      # defining the api
     api_url = subjects_api_colab
+
+    file_name = key[:] + '.png'
+
     data = {
-        "image_path": "/content/drive/MyDrive/Infy_Assignment_Team_Anant/UNIVERSITIES_&_COLLEGES_MARKSHEETS/DocVisionData/Working Images/State-AP/AP-12.png",
+        "image_path": file_name,
     }
     data = json.dumps(data)
     resp = requests.post(url = api_url, data = data)

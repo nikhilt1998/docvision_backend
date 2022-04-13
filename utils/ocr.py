@@ -95,8 +95,9 @@ def get_lined_text(sorted_bounding_boxes):
   Output: Lined text
   """
 
-  lined_text = \
+  lined_text_list = \
         [' '.join([desired[-1] for desired in cord])for cord in sorted_bounding_boxes]
+  lined_text = '\n'.join(lined_text_list)
   return lined_text
 
 def get_spaced_text(sorted_bounding_boxes):

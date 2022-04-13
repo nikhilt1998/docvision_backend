@@ -41,9 +41,13 @@ async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)):
     for img in uploaded_file:
         # Save the uploaded_docs image in uploaded_docs folder
         file_location = f"data/uploaded_docs/{img.filename}"
-        with open(file_location, "wb") as file_object:
-            shutil.copyfileobj(img.file, file_object)
-        
+
+        try:
+            with open(file_location, "wb") as file_object:
+                shutil.copyfileobj(img.file, file_object)
+        except:
+            logger.error("Image Upload Failed for " + str(img.filename))
+            continue 
 
         key = img.filename.split('.')[0]
 
@@ -52,9 +56,7 @@ async def upload(candidate_id, uploaded_file: List[UploadFile] = File(...)):
         image_status[key] = {"Status":"Unprocessed","Details":{},"candidate_id":candidate_id}
         set_dict_redis("image_status", image_status)
 
-        logger.info(key)
-        logger.info("Image Status: ", get_dict_redis("image_status"))
-        logger.info(q)
+        logger.debug("Image Status: ", get_dict_redis("image_status"))
 
         # adding the image in redis queue for processing
         q.enqueue(pipeline,img.filename)
@@ -136,7 +138,7 @@ async def CandidateInfo():
         educational_details[candidate_id] = []
 
     for image_name in image_status:
-        if image_status[image_name]["Status"]=="processed_docs":
+        if image_status[image_name]["Status"]=="Processed":
 
             img_details = image_status[image_name]["Details"]
             

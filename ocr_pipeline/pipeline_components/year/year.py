@@ -55,17 +55,25 @@ def extract_year(ocr_text):
     Output: extracted year
     """
     ans1 = qna('What is the examination month?',ocr_text)['answer'].lower()
-    reg_response1 = date_regex(ans1)[-4:len(ans1)]
+    reg_response1 = date_regex(ans1)[-4:]
     ans2 = qna('What is certification issue year?',ocr_text)['answer'].lower()
-    reg_response2 = date_regex(ans2)[-4:len(ans2)]
+    reg_response2 = date_regex(ans2)[-4:]
 
-    # no response and wrong response has to be handled : code has to be written and checked
+    # logging of no response and wrong response has to be handled : code has to be written and checked
+    # logging for out of range year has to be done
     if reg_response1 == None or reg_response2 == None:
         year = "not found"
 
-    if int(reg_response1) > int(reg_response2):
+    
+    if reg_response1.isdigit() and reg_response1.isdigit():
+      if reg_response1 > reg_response2:
         year = reg_response1
+      else:
+        year = reg_response2
     else:
+      if reg_response1.isdigit():
+        year = reg_response1
+      else:
         year = reg_response2
 
     return year

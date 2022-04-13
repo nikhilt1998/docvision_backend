@@ -23,5 +23,5 @@ def extract_board_univer(ocr_text):
     resp = requests.post(url = api_url, data = data)
     name_board_univer = resp.text
     
-    logger.info("------------------This is extract_board_univer function respense: ", name_board_univer)
+    logger.info("------------------This is extract_board_univer function respense: "+ str(name_board_univer))
     return name_board_univer

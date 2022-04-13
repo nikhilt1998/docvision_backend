@@ -29,7 +29,7 @@ from year import extract_year
 
 from certi_preprocess import deskew_img
 from certi_postprocess import spellingCorrection
-from ocr import certificate_to_text,get_spaced_text,ocr_linecords_correction
+from ocr import certificate_to_text,get_lined_text,ocr_linecords_correction,get_spaced_text
 
 from classify_certi import classify_certi_docs
 
@@ -53,6 +53,8 @@ def pipeline(filename):
     Input: filename
     Output: success message
     """
+    logger.info("Pipeline started for "+str(filename))
+
     key = filename.split('.')[0]
 
     # Updating up the redis directory 
@@ -60,7 +62,7 @@ def pipeline(filename):
     image_status[key]["Status"] = "Processing"
     set_dict_redis("image_status", image_status)
 
-    logger.info("Image Status updated for "+ key)
+    logger.debug(" Image Status updated for "+ str(filename))
 
     # skew detectition and correction 
     filename = "data/uploaded_docs/" + filename
@@ -77,10 +79,11 @@ def pipeline(filename):
 
     #ocr_text output
     ocr_text = get_spaced_text(sorted_bounding_boxes)
+    ocr_text_lined = get_lined_text(sorted_bounding_boxes)
 
     #classify into categories
     categ = classify_certi_docs(ocr_text)
-    logger.info("------------------Certificate classified as ", categ)
+    logger.info("Certificate classified as " + str(categ))
 
     #json output to return
     pipeline_output = {}
@@ -92,10 +95,10 @@ def pipeline(filename):
 
     #class 2
     elif categ == "gpa_pattern":
-      board_univer_name = extract_board_univer(ocr_text)
+      board_univer_name = extract_board_univer(ocr_text_lined)
       sgpa_cgpa = extract_GPA(sorted_bounding_boxes,bounding_boxes)
-      subjects = extract_subjects(sorted_bounding_boxes)
-      year = extract_year(ocr_text)
+      subjects = extract_subjects(sorted_bounding_boxes, key)
+      year = extract_year(ocr_text_lined)
 
       pipeline_output['board_univer_name'] = board_univer_name
       pipeline_output['sgpa_cgpa'] = sgpa_cgpa
@@ -104,10 +107,10 @@ def pipeline(filename):
       
     #class 3
     else:
-      board_univer_name = extract_board_univer(ocr_text)
+      board_univer_name = extract_board_univer(ocr_text_lined)
       grand_total_marks = extract_total_marks(ocr_text)
-      subjects = extract_subjects(sorted_bounding_boxes)
-      year = extract_year(ocr_text)
+      subjects = extract_subjects(sorted_bounding_boxes, key)
+      year = extract_year(ocr_text_lined)
 
       pipeline_output['board_univer_name'] = board_univer_name
       pipeline_output['grand_total_marks'] = grand_total_marks
