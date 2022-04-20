@@ -144,37 +144,30 @@ async def CandidateInfo():
             
             details = {
                 "certificate_file_Name":image_name,
-                "Qualification":"",
+                "Qualification":"GRADUATE",
                 "Board_University":"",
-                "Year":random.randint(2000,2012),
+                "Year":"XXXX",
                 "Marks_CGPA":"",
                 "status":"Approved"
             }
 
-            if "TOTAL_MARKS" in img_details:
-                details["Marks_CGPA"] = img_details["TOTAL_MARKS"]
-            elif "CGPA" in img_details:
-                details["Marks_CGPA"] = img_details["CGPA"]
+            if "year" in img_details:
+                details["Year"] = img_details["year"]
+
+            if "grand_total_marks" in img_details:
+                details["Marks_CGPA"] = img_details["grand_total_marks"]
+            elif "sgpa_cgpa" in img_details:
+                details["Marks_CGPA"] = img_details["sgpa_cgpa"]
             else:
                 details["Marks_CGPA"] = " "
 
 
-            if "BOARD" in img_details:
-                details["Board_University"] = img_details["BOARD"]
-            else:
-                details["Board_University"] = img_details["University"]
-
-
-            if "LEVEL" in img_details:
-                details["Qualification"] = img_details["LEVEL"]
-            else:
-                details["Qualification"] = "GRADUATE"
+            if "board_univer_name" in img_details:
+                details["Board_University"] = img_details["board_univer_name"]
             
 
             educational_details[image_status[image_name]["candidate_id"]].append(details)
-    logger.info("Candidate List: ",candidate_list)
-    logger.info("")
-    logger.info("Education Details: ",educational_details)
+            
     output_details = []
     for candidate_id in candidate_list:
         candidate_info = candidate_list[candidate_id]

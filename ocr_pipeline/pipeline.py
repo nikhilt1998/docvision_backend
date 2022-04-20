@@ -81,6 +81,8 @@ def pipeline(filename):
     ocr_text = get_spaced_text(sorted_bounding_boxes)
     ocr_text_lined = get_lined_text(sorted_bounding_boxes)
 
+    # logger.info("Certificate Name\t: " + filename + "\nOcr Text\t: " + ocr_text_lined + "\nOCR text length\t: " + str(len(ocr_text_lined)))
+
     #classify into categories
     categ = classify_certi_docs(ocr_text)
     logger.info("Certificate classified as " + str(categ))

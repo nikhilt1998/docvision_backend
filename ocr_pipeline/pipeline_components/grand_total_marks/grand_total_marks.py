@@ -1,6 +1,7 @@
 """ Extract the total marks from the certificate """
 
 from transformers import pipeline
+from config import logger
 
 model_name = "deepset/roberta-base-squad2"
 nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
@@ -115,9 +116,28 @@ def extract_total_marks(ocr_text):
     resp2 = final_answer(finaltext2)
 
     if(resp1 == -1 and resp2 == -1):
-      return "do manual check"
+      looger.error("Total marks detected is invalid.")
+      return "XXX"
     elif(resp1 == -1):
+      temp_string = resp2
+      try:
+        temp_string = int(temp_string)
+        if temp_string < 100:
+          logger.error("Total marks detected is invalid.")
+          resp2 = "XXX"
+      except:
+        logger.error("Total marks detected contains characters")
+        resp2 = "XXX"
       return resp2
     
+    temp_string = resp1
+    try:
+      temp_string = int(temp_string)
+      if temp_string < 100:
+        logger.error("Total marks detected is invalid.")
+        resp1 = "XXX"
+    except:
+      logger.error("Total marks detected contains characters")
+      resp1 = "XXX"
     return resp1
 

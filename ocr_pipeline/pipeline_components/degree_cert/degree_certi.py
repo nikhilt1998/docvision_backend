@@ -11,9 +11,11 @@ def extract_dc_details(ocr_text):
   Input: certificate's OCR text.
   Output: Degree certificate details in format
   """
+  print(spacy.__version__)
 
   output_dir = Path("ner_dc")
-  #requires spacyv2
+  #requires spacyv2 : checked on 14/4/22 with spacy v2.3.7
+  
   nlp_test = spacy.load(output_dir)
   doc = nlp_test(ocr_text)
   entities = [(ent.text, ent.label_) for ent in doc.ents]
@@ -33,7 +35,7 @@ def extract_dc_details(ocr_text):
     if (entities[i][1] == 'USN'):
       docx['USN'].append(entities[i][0])
   
-  #print(docx)
+  print(docx)
   # docx = json.dumps(docx, indent=2)    
   return docx
 

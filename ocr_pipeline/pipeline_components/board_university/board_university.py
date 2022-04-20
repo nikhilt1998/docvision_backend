@@ -12,7 +12,7 @@ def extract_board_univer(ocr_text):
     Error Info: Raise an error if spacy model doesn't recognise university or board name.
     """
 
-    logger.info("------------------This is extract_board_univer function")
+    logger.info("This is extract_board_univer function")
 
     # defining the api
     api_url = university_api_colab
@@ -23,5 +23,5 @@ def extract_board_univer(ocr_text):
     resp = requests.post(url = api_url, data = data)
     name_board_univer = resp.text
     
-    logger.info("------------------This is extract_board_univer function respense: "+ str(name_board_univer))
+    logger.info("This is extract_board_univer function response: "+ str(name_board_univer))
     return name_board_univer

@@ -3,6 +3,7 @@
 import re
 from datetime import date
 from transformers import pipeline
+from config import logger
 
 model_name = "deepset/roberta-base-squad2"
 nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
@@ -30,7 +31,9 @@ def date_regex(date_str):
         temp = ""+str((cur_centuary-1))+date_str[x.end()-2:x.end()]
       else:
         temp = ""+str((cur_centuary))+date_str[x.end()-2:x.end()]
+
     date_str = temp
+
   return date_str
 
 
@@ -44,8 +47,11 @@ def qna(question,context):
       'question': question,
       'context': context
   }
-  res = nlp(qa_input)
-
+  try:
+    res = nlp(qa_input)
+  except:
+    logger.error("QnA failed to recognise certificate year on Q: " + str(question))
+    res = "XXXX"
   return res
 
 def extract_year(ocr_text):
@@ -61,10 +67,10 @@ def extract_year(ocr_text):
 
     # logging of no response and wrong response has to be handled : code has to be written and checked
     # logging for out of range year has to be done
-    if reg_response1 == None or reg_response2 == None:
-        year = "not found"
-
-    
+    if (reg_response1 == None or reg_response2 == None) or (reg_response1 == "XXXX" and reg_response2 == "XXXX") :
+        year = "XXXX"
+        logger.info("Year not recognised. Default values assigned")
+        
     if reg_response1.isdigit() and reg_response1.isdigit():
       if reg_response1 > reg_response2:
         year = reg_response1
@@ -76,7 +82,21 @@ def extract_year(ocr_text):
       else:
         year = reg_response2
 
-    return year
+    date_str = year
+    cur_year = date.today().year
+    
+    logger.info("Year detected as : "+ str(date_str)+", Current Year: "+ str(cur_year))
+    try: 
+      year = int(date_str)
+      logger.debug("Converted year string to integer for boundary validation")
+      if year < (cur_year - 60) or year > cur_year:
+        logger.error("Year detected is outsied the specified boundary.")
+        raise Exception("")
+    except:
+      logger.error("Invalid date! Assigning garbage as year")
+      date_str = "XXXX"
+
+    return date_str
 
 #sample check for rcoem univ and rgpv : passed both
 # ocr_text='''RAJIV GANDHI PROUDYOGIKI VISHWAVIDYALAYA, BHOPAL
